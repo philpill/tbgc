@@ -1,0 +1,33 @@
+SDL2
+
+Download SDL2
+https://www.libsdl.org/download-2.0.php
+Windows Development Library
+https://www.libsdl.org/release/SDL2-devel-2.0.12-mingw.tar.gz
+
+Extract SDL2
+e.g.
+C:\dev\
+
+Add SDL2 to PATH
+e.g.
+C:\dev\SDL2-2.0.12\i686-w64-mingw32\bin
+
+MINGW
+
+Download MinGW (32bit)
+https://osdn.net/projects/mingw/
+mingw-get-setup.exe
+
+Install MinGW
+e.g.
+C:\MinGW\
+
+Configure Make (optional)
+https://stackoverflow.com/a/32127632
+copy mingw32-make.exe
+rename copy to make.exe 
+
+Add MinGW to PATH
+e.g.
+C:\MinGW\bin
