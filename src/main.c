@@ -1,18 +1,19 @@
 #include <SDL.h>
+#include <SDL_image.h>
 #include <stdio.h>
 
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
 
 int main(int argc, char* args[]) {
-    
+
 	SDL_Window* window = NULL;
 	SDL_Surface* surface = NULL;
 
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
 
 		printf("init error: SDL_Error: %s\n", SDL_GetError());
-	
+
 	} else {
 
 		window = SDL_CreateWindow("TBGC", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
@@ -20,7 +21,7 @@ int main(int argc, char* args[]) {
 		if (window == NULL) {
 
 			printf("create window error: SDL_Error: %s\n", SDL_GetError());
-		
+
 		} else {
 
 			surface = SDL_GetWindowSurface(window);
