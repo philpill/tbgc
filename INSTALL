@@ -31,3 +31,15 @@ rename copy to make.exe
 Add MinGW to PATH
 e.g.
 C:\MinGW\bin
+
+Setup Visual Studio Code intellisense
+https://code.visualstudio.com/docs/cpp/config-mingw
+https://stackoverflow.com/a/57463607
+install c/c++ extension
+open [project path]\.vscode\c_cpp_properties.json
+update configurations:
+    "includePath": [
+        "${workspaceFolder}/**",
+        "C:\\dev\\SDL2-2.0.12\\i686-w64-mingw32\\include\\SDL2",
+        "C:\\dev\\SDL2_image-2.0.5\\i686-w64-mingw32\\include\\SDL2"
+    ],
