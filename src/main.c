@@ -24,7 +24,6 @@ int main(int argc, char *args[])
 
         if (window == NULL)
         {
-
             printf("create window error: SDL_Error: %s\n", SDL_GetError());
         }
         else
@@ -39,9 +38,19 @@ int main(int argc, char *args[])
                     }
                 }
 
-                surface = SDL_GetWindowSurface(window);
-                SDL_FillRect(surface, NULL, SDL_MapRGB(surface->format, 0xFF, 0xFF, 0xFF));
-                SDL_UpdateWindowSurface(window);
+                //Initialize PNG loading
+                int imgFlags = IMG_INIT_PNG;
+                if (!(IMG_Init(imgFlags) & imgFlags))
+                {
+                    printf("SDL_image Error: %s\n", IMG_GetError());
+                }
+                else
+                {
+                    //Get window surface
+                    surface = SDL_GetWindowSurface(window);
+                    SDL_FillRect(surface, NULL, SDL_MapRGB(surface->format, 0xFF, 0xFF, 0xFF));
+                    SDL_UpdateWindowSurface(window);
+                }
             }
 
             SDL_DestroyWindow(window);
