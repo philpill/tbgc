@@ -6,10 +6,11 @@
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
 
+const int SCREEN_TICK_PER_FRAME = 1000 / 30;
+
 SDL_Window *window = NULL;
 SDL_Surface *screenSurface = NULL;
 SDL_Surface *pngSurface = NULL;
-
 
 bool init()
 {
@@ -49,7 +50,6 @@ bool init()
 
 void close()
 {
-
     SDL_FreeSurface(pngSurface);
     pngSurface = NULL;
 
@@ -83,7 +83,6 @@ SDL_Surface *loadSurface(char *path)
     return optimisedSurface;
 }
 
-
 bool loadMedia()
 {
     bool success = true;
@@ -101,14 +100,12 @@ bool loadMedia()
 
 int main(int argc, char *args[])
 {
-
     if (!init())
     {
         printf("Failed to initialize!\n");
     }
     else
     {
-
         if (!loadMedia())
         {
             printf("Failed to load media!\n");
@@ -117,6 +114,11 @@ int main(int argc, char *args[])
         {
             bool quit = false;
             SDL_Event e;
+
+            Uint32 start_t, end_t, total_t;
+
+            // start timer
+            start_t = SDL_GetTicks();
 
             while (!quit)
             {
@@ -131,6 +133,19 @@ int main(int argc, char *args[])
                 SDL_BlitSurface(pngSurface, NULL, screenSurface, NULL);
 
                 SDL_UpdateWindowSurface(window);
+
+                end_t = SDL_GetTicks();
+
+                total_t = end_t - start_t;
+
+                if (total_t < SCREEN_TICK_PER_FRAME)
+                {
+                    printf("%d\n", SDL_GetTicks());
+
+                    SDL_Delay(SCREEN_TICK_PER_FRAME - total_t);
+
+                    start_t = SDL_GetTicks();
+                }
             }
         }
     }

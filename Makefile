@@ -8,7 +8,9 @@ INCLUDE_PATHS = -IC:\dev\SDL2-2.0.12\i686-w64-mingw32\include\SDL2 -IC:\dev\SDL2
 
 LIBRARY_PATHS = -LC:\dev\SDL2-2.0.12\i686-w64-mingw32\lib -LC:\dev\SDL2_image-2.0.5\i686-w64-mingw32\lib
 
-COMPILER_FLAGS = -w -Wl,-subsystem,windows
+# https://stackoverflow.com/a/34540492
+# COMPILER_FLAGS = -w -Wl,-subsystem,windows
+COMPILER_FLAGS = -w
 
 LINKER_FLAGS = -lmingw32 -lSDL2main -lSDL2 -lSDL2_image
 
