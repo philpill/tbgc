@@ -2,7 +2,7 @@ CFLAGS=-std=gnu99
 SHELL = /bin/sh
 CC = gcc
 DEPS = src/stb_image.h
-OBJS = src/main.c
+OBJS = src/main.c src/render.c
 
 INCLUDE_PATHS = -IC:\dev\SDL2-2.0.12\i686-w64-mingw32\include\SDL2
 
