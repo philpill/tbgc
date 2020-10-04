@@ -1,4 +1,5 @@
 #include <SDL.h>
+#include "player.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -73,11 +74,13 @@ int render_init() {
     return 0;
 }
 
-int render_handle(int posx, int posy) {
+int render_handle(position *player_pos) {
+
+    printf("delta: %d\n", player_pos->x);
 
     SDL_Rect dst;
-    dst.x = posx;
-    dst.y = posy;
+    dst.x = player_pos->x;
+    dst.y = player_pos->y;
     dst.w = 32;
     dst.h = 32;
 
