@@ -31,11 +31,11 @@ int event_handle()
                 break;
 
             case SDLK_LEFT:
-                player_accelerate_x(-10);
+                player_accelerate_x(-5);
                 break;
 
             case SDLK_RIGHT:
-                player_accelerate_x(10);
+                player_accelerate_x(5);
                 break;
 
             case SDLK_ESCAPE:

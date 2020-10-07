@@ -7,11 +7,13 @@
 static SDL_Renderer *renderer = NULL;
 static SDL_Texture *pngTexture = NULL;
 static SDL_Window *window = NULL;
+static Position *player_position;
 
-static int loadImage() {
+static int loadImage()
+{
 
     SDL_Surface *pngSurface = NULL;
-    
+
     unsigned char *stbiData = NULL;
 
     int width, height, orig_format;
@@ -19,33 +21,36 @@ static int loadImage() {
     stbiData = stbi_load("assets/1.png", &width, &height, &orig_format, req_format);
 
     Uint32 rmask, gmask, bmask, amask;
-    #if SDL_BYTEORDER == SDL_BIG_ENDIAN
-        int shift = (req_format == STBI_rgb) ? 8 : 0;
-        rmask = 0xff000000 >> shift;
-        gmask = 0x00ff0000 >> shift;
-        bmask = 0x0000ff00 >> shift;
-        amask = 0x000000ff >> shift;
-    #else // little endian, like x86
-        rmask = 0x000000ff;
-        gmask = 0x0000ff00;
-        bmask = 0x00ff0000;
-        amask = (req_format == STBI_rgb) ? 0 : 0xff000000;
-    #endif
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+    int shift = (req_format == STBI_rgb) ? 8 : 0;
+    rmask = 0xff000000 >> shift;
+    gmask = 0x00ff0000 >> shift;
+    bmask = 0x0000ff00 >> shift;
+    amask = 0x000000ff >> shift;
+#else // little endian, like x86
+    rmask = 0x000000ff;
+    gmask = 0x0000ff00;
+    bmask = 0x00ff0000;
+    amask = (req_format == STBI_rgb) ? 0 : 0xff000000;
+#endif
 
     int depth, pitch;
-    if (req_format == STBI_rgb) {
+    if (req_format == STBI_rgb)
+    {
         depth = 24;
-        pitch = 3*width; // 3 bytes per pixel * pixels per row
-    } else { // STBI_rgb_alpha (RGBA)
+        pitch = 3 * width; // 3 bytes per pixel * pixels per row
+    }
+    else
+    { // STBI_rgb_alpha (RGBA)
         depth = 32;
-        pitch = 4*width;
+        pitch = 4 * width;
     }
 
     // printf("width: %d\n", width);
     // printf("height: %d\n", height);
 
-    pngSurface = SDL_CreateRGBSurfaceFrom((void*)stbiData, width, height, depth, pitch,
-                                            rmask, gmask, bmask, amask);
+    pngSurface = SDL_CreateRGBSurfaceFrom((void *)stbiData, width, height, depth, pitch,
+                                          rmask, gmask, bmask, amask);
 
     stbi_image_free(stbiData);
     stbiData = NULL;
@@ -56,7 +61,9 @@ static int loadImage() {
     pngSurface = NULL;
 }
 
-int render_init() {
+int render_init(Position *player_pos)
+{
+    player_position = player_pos;
 
     const int SCREEN_WIDTH = 640;
     const int SCREEN_HEIGHT = 480;
@@ -74,13 +81,11 @@ int render_init() {
     return 0;
 }
 
-int render_handle(position *player_pos) {
-
-    printf("delta: %d\n", player_pos->x);
-
+int render_handle()
+{
     SDL_Rect dst;
-    dst.x = player_pos->x;
-    dst.y = player_pos->y;
+    dst.x = player_position->x;
+    dst.y = player_position->y;
     dst.w = 32;
     dst.h = 32;
 
@@ -89,7 +94,8 @@ int render_handle(position *player_pos) {
     SDL_RenderPresent(renderer);
 }
 
-void render_destroy() {
+void render_destroy()
+{
     SDL_DestroyTexture(pngTexture);
     pngTexture = NULL;
 

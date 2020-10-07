@@ -19,28 +19,24 @@ int main(int argc, char *args[])
 
     double start_t, end_t, total_t;
 
-    int posx = 0;
-    int posy = 0;
+    Position *player_pos;
 
-    render_init();
+    player_init(&player_pos);
+
+    render_init(player_pos);
 
     // start timer
     start_t = SDL_GetTicks();
 
-    position player_pos = { 0, 0 };
-
     while (!quit)
     {
-        if (event_handle() != 0) 
+        if (event_handle() != 0)
         {
             quit = true;
-        }        
+        }
 
-        player_handle(&player_pos);
-
-        printf("charlie: %d\n", player_pos.x);
-
-        render_handle(&player_pos);
+        player_handle();
+        render_handle(player_pos);
 
         end_t = SDL_GetTicks();
 
