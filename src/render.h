@@ -1,8 +1,12 @@
 #ifndef RENDER_H_
 #define RENDER_H_
 
-int render_init();
-int render_handle(int posx, int posy);
+
+#include <SDL.h>
+#include "player.h"
+
+int render_init(Uint32 start_t, Position *player_pos);
+int render_tick(Uint32 current_t);
 void render_destroy();
 
 #endif

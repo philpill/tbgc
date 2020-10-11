@@ -9,7 +9,7 @@ int event_init()
 {
 }
 
-int event_handle()
+int event_tick()
 {
     while (SDL_PollEvent(&e) != 0)
     {
@@ -31,11 +31,11 @@ int event_handle()
                 break;
 
             case SDLK_LEFT:
-                player_accelerate_x(-5);
+                player_accelerate_x(-7);
                 break;
 
             case SDLK_RIGHT:
-                player_accelerate_x(5);
+                player_accelerate_x(7);
                 break;
 
             case SDLK_ESCAPE:

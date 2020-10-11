@@ -17,6 +17,6 @@ typedef struct {
 } Player;
 
 int player_init(Position **pos);
-int player_handle();
+int player_tick();
 
 #endif

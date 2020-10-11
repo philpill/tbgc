@@ -5,8 +5,6 @@
 #include "event.h"
 #include "player.h"
 
-const int SCREEN_TICK_PER_FRAME = 1000 / 30;
-
 void close()
 {
     render_destroy();
@@ -17,37 +15,27 @@ int main(int argc, char *args[])
 {
     bool quit = false;
 
-    double start_t, end_t, total_t;
+    Uint32 start_t, current_t;
 
     Position *player_pos;
-
-    player_init(&player_pos);
-
-    render_init(player_pos);
 
     // start timer
     start_t = SDL_GetTicks();
 
+    player_init(&player_pos);
+    render_init(start_t, player_pos);
+
     while (!quit)
     {
-        if (event_handle() != 0)
+        current_t = SDL_GetTicks();
+
+        if (event_tick() != 0)
         {
             quit = true;
         }
 
-        player_handle();
-        render_handle(player_pos);
-
-        end_t = SDL_GetTicks();
-
-        total_t = end_t - start_t;
-
-        if (total_t < SCREEN_TICK_PER_FRAME)
-        {
-            SDL_Delay(SCREEN_TICK_PER_FRAME - total_t);
-
-            start_t = SDL_GetTicks();
-        }
+        player_tick(current_t);
+        render_tick(current_t);
     }
 
     close();

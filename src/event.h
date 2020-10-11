@@ -2,6 +2,6 @@
 #define EVENT_H_
 
 int event_init();
-int event_handle();
+int event_tick();
 
 #endif

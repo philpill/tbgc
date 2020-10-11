@@ -1,4 +1,5 @@
 #include "player.h"
+#include "utils.h"
 
 static Player player;
 
@@ -13,19 +14,19 @@ int player_init(Position **pos)
         .acceleration_max_y = 10,
         .position = (Position) { 
             .x = 0, 
-            .y = 0 
+            .y = 100 
         }
     };
 
     *pos = &player.position;
 }
 
-int player_handle()
+int player_tick()
 {
     if (player.acceleration_x != 0) 
     {
-        player.acceleration_x = player.acceleration_x > player.acceleration_max_x ? player.acceleration_max_x : player.acceleration_x;
-        player.acceleration_x = player.acceleration_x < player.acceleration_min_x ? player.acceleration_min_x : player.acceleration_x;
+        utils_clamp(&player.acceleration_x, player.acceleration_min_x, player.acceleration_max_x);
+
         player.acceleration_x = player.acceleration_x < 0.1 && player.acceleration_x > -0.1 ? 0 : player.acceleration_x;
 
         player.acceleration_x = player.acceleration_x * 0.75;
