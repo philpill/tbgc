@@ -16,7 +16,7 @@ static int current_frame = 0;
 static int animation_rate = 150;
 static Uint32 start, delta;
 
-static RenderComponent components[100];
+static RenderComponent *components[100];
 static int num_component = 0;
 
 static int loadImage(char *resource, SDL_Texture **texture)
@@ -71,6 +71,16 @@ static int loadImage(char *resource, SDL_Texture **texture)
     pngSurface = NULL;
 }
 
+static void components_init()
+{
+    for (int i = 0; i < num_component; i++) 
+    {
+        components[i]->renderer = renderer;
+
+        render_comp_loadImage(components[i]);
+    }
+}
+
 void render_system_init()
 {
     const int SCREEN_WIDTH = 640;
@@ -83,11 +93,15 @@ void render_system_init()
     window = SDL_CreateWindow("TBGC", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     screenSurface = SDL_GetWindowSurface(window);
+
+    components_init();
 }
 
-void render_system_add_component(RenderComponent component)
+void render_system_add_component(RenderComponent *component)
 {
-    components[num_component].id = component.id;
+    components[num_component] = malloc (sizeof(RenderComponent));
+    components[num_component]->resource_path = malloc (sizeof(char) * 255);
+
     num_component++;
 }
 
@@ -95,12 +109,17 @@ void render_system_tick()
 {
     for (int i = 0; i < num_component; i++)
     {
-        components[i].id = 1;
+        
     }
 }
 
 void render_system_destroy()
 {
+    for (int i = 0; i < num_component; i++)
+    {
+        free(components[i]);
+    }
+
     SDL_DestroyTexture(pngTexture);
     pngTexture = NULL;
 

@@ -2,11 +2,6 @@
 #define PLAYER_H_
 
 typedef struct {
-    int x;
-    int y;
-} Position;
-
-typedef struct {
     int acceleration_x;
     int acceleration_y;
     int acceleration_max_x;

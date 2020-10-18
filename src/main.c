@@ -4,10 +4,14 @@
 
 #include "event.h"
 #include "player.h"
+#include "components/render.h"
+#include "systems/render.h"
+#include "entities/player.h"
 
 void close()
 {
     render_destroy();
+    render_system_destroy();
     SDL_Quit();
 }
 
@@ -17,13 +21,14 @@ int main(int argc, char *args[])
 
     Uint32 start_t, current_t;
 
-    Position *player_pos;
-
     // start timer
     start_t = SDL_GetTicks();
 
-    player_init(&player_pos);
-    render_init(start_t, player_pos);
+    PlayerEntity player_entity;
+
+    render_system_add_component(&(player_entity.render_component));
+
+    render_system_init();
 
     while (!quit)
     {
@@ -34,8 +39,7 @@ int main(int argc, char *args[])
             quit = true;
         }
 
-        player_tick(current_t);
-        render_tick(current_t);
+        render_system_tick();
     }
 
     close();

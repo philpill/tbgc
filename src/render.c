@@ -1,6 +1,7 @@
 #include <SDL.h>
 #include "player.h"
 #include "utils.h"
+#include "components/render.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
