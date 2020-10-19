@@ -1,6 +1,8 @@
 #include <stdbool.h>
 #include <SDL.h>
 
+#include "event.h";
+
 static SDL_Event e;
 
 s_event_init()

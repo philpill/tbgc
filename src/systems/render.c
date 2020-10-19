@@ -1,7 +1,9 @@
 #include <SDL.h>
-#include "../player.h"
+
+#include "render.h"
 #include "../utils.h"
 
+#define STB_IMAGE_IMPLEMENTATION
 #include "../stb_image.h"
 
 #include "../components/render.h"
@@ -81,7 +83,7 @@ static void components_init()
     }
 }
 
-void render_system_init()
+void s_render_init()
 {
     const int SCREEN_WIDTH = 640;
     const int SCREEN_HEIGHT = 480;
@@ -97,7 +99,7 @@ void render_system_init()
     components_init();
 }
 
-void render_system_add_component(RenderComponent *component)
+void s_render_add_component(RenderComponent *component)
 {
     components[num_component] = malloc (sizeof(RenderComponent));
     components[num_component]->resource_path = malloc (sizeof(char) * 255);
@@ -105,7 +107,7 @@ void render_system_add_component(RenderComponent *component)
     num_component++;
 }
 
-void render_system_tick()
+void s_render_tick()
 {
     for (int i = 0; i < num_component; i++)
     {
@@ -113,7 +115,7 @@ void render_system_tick()
     }
 }
 
-void render_system_destroy()
+void s_render_destroy()
 {
     for (int i = 0; i < num_component; i++)
     {
