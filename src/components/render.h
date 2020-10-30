@@ -10,7 +10,7 @@ typedef struct {
 
 typedef struct {
     int id, framerate, current_frame;
-    char *resource_path;
+    char resource_path[255];
     
     SDL_Texture *texture;
     SDL_Rect srcRect, dstRect;

@@ -24,7 +24,9 @@ int main(int argc, char *args[])
 
     PlayerEntity player_entity;
 
-    //render_system_add_component(&(player_entity.render_component));
+    strcpy(player_entity.render_component.resource_path, "./assets/2.png");
+
+    s_render_add_component(&(player_entity.render_component));
 
     s_render_init();
     s_event_init();

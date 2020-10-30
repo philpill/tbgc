@@ -26,5 +26,8 @@ run:
 build:$(OBJS) $(DEPS)
 	$(CC) $(OBJS) $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o $(OBJ_NAME)
 
+debug:$(OBJS) $(DEPS)
+	$(CC) $(OBJS) $(INCLUDE_PATHS) $(LIBRARY_PATHS) $(COMPILER_FLAGS) $(LINKER_FLAGS) -g -o $(OBJ_NAME) && gdb $(OBJ_NAME)
+
 clean:
 	del *swp *swo *exe

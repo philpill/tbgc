@@ -97,22 +97,41 @@ void s_render_init()
     screenSurface = SDL_GetWindowSurface(window);
 
     components_init();
+printf("test3\n");
 }
 
 void s_render_add_component(RenderComponent *component)
 {
-    components[num_component] = malloc (sizeof(RenderComponent));
-    components[num_component]->resource_path = malloc (sizeof(char) * 255);
+    components[num_component] = (RenderComponent*)malloc(sizeof(RenderComponent));
+
+    strcpy(components[num_component]->resource_path, "assets/2.png");
+
+    //components[num_component]->renderer = component->renderer;
+
+    components[num_component]->srcRect.w = 32;
+    components[num_component]->srcRect.h = 32;
+    components[num_component]->srcRect.x = 0;
+    components[num_component]->srcRect.y = 0;
+
+    components[num_component]->dstRect.w = 32;
+    components[num_component]->dstRect.h = 32;
+
+    components[num_component]->dstRect.x = 10;
+    components[num_component]->dstRect.y = 10;
 
     num_component++;
 }
 
 void s_render_tick()
 {
+    SDL_RenderClear(renderer);
+    
     for (int i = 0; i < num_component; i++)
     {
-        
+        SDL_RenderCopy(renderer, components[i]->texture, &(components[i]->srcRect), &(components[i]->dstRect));
     }
+
+    SDL_RenderPresent(renderer);
 }
 
 void s_render_destroy()
@@ -120,6 +139,8 @@ void s_render_destroy()
     for (int i = 0; i < num_component; i++)
     {
         free(components[i]);
+
+        components[i] = NULL;
     }
 
     SDL_DestroyTexture(pngTexture);

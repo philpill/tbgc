@@ -39,7 +39,9 @@ static void get_surface(int width, int height, int orig_format, int req_format, 
     SDL_Surface *surface = SDL_CreateRGBSurfaceFrom((void *)stbiData, width, height, depth, pitch,
                                           rmask, gmask, bmask, amask);
 
-    *surf = &surface;
+    printf("surface: %p\n", (void*)&surface);
+
+    *surf = surface;
 }
 
 void render_comp_loadImage(RenderComponent *component)
@@ -51,14 +53,51 @@ void render_comp_loadImage(RenderComponent *component)
 
     int width, height, orig_format;
     int req_format = STBI_rgb_alpha;
+
+    printf("%s\n", component->resource_path);
+
     stbiData = stbi_load(component->resource_path, &width, &height, &orig_format, req_format);
 
+    if (stbiData == NULL)
+    {
+        printf("NULL: %s\n", stbi_failure_reason());
+        return;
+    }
+
+    // debug surf address
+
+    printf("surf1: %p\n", (void*)&surf);
+
     get_surface(width, height, orig_format, req_format, stbiData, &surf);
+
+    printf("surf2: %p\n", (void*)&surf);
 
     stbi_image_free(stbiData);
     stbiData = NULL;
 
+    if (surf == NULL)
+    {
+    fprintf(stderr, "get_surface failed: %s\n", SDL_GetError());
+    exit(1);
+    }
+    printf("test1\n");
+
     tex = SDL_CreateTextureFromSurface(component->renderer, surf);
+
+if (tex == NULL) {
+    fprintf(stderr, "CreateTextureFromSurface failed: %s\n", SDL_GetError());
+    exit(1);
+}
+
+
+    printf("test2\n");
+
+
+    if (tex == NULL)
+    {
+        printf("NULL\n");
+        return;
+    }
 
     component->texture = &tex;
 
