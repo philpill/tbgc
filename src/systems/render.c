@@ -97,27 +97,16 @@ void s_render_init()
     screenSurface = SDL_GetWindowSurface(window);
 
     components_init();
-printf("test3\n");
 }
 
 void s_render_add_component(RenderComponent *component)
 {
     components[num_component] = (RenderComponent*)malloc(sizeof(RenderComponent));
 
-    strcpy(components[num_component]->resource_path, "assets/2.png");
+    strcpy(components[num_component]->resource_path, component->resource_path);
 
-    //components[num_component]->renderer = component->renderer;
-
-    components[num_component]->srcRect.w = 32;
-    components[num_component]->srcRect.h = 32;
-    components[num_component]->srcRect.x = 0;
-    components[num_component]->srcRect.y = 0;
-
-    components[num_component]->dstRect.w = 32;
-    components[num_component]->dstRect.h = 32;
-
-    components[num_component]->dstRect.x = 10;
-    components[num_component]->dstRect.y = 10;
+    components[num_component]->srcRect = component->srcRect;
+    components[num_component]->dstRect = component->dstRect;
 
     num_component++;
 }

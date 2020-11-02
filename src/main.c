@@ -26,6 +26,9 @@ int main(int argc, char *args[])
 
     strcpy(player_entity.render_component.resource_path, "./assets/2.png");
 
+    player_entity.render_component.srcRect = (SDL_Rect){ .w = 16, .h = 32, .x = 0, .y = 0 };
+    player_entity.render_component.dstRect = (SDL_Rect){ .w = 16, .h = 32, .x = 10, .y = 10 };
+
     s_render_add_component(&(player_entity.render_component));
 
     s_render_init();
