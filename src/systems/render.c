@@ -101,12 +101,7 @@ void s_render_init()
 
 void s_render_add_component(RenderComponent *component)
 {
-    components[num_component] = (RenderComponent*)malloc(sizeof(RenderComponent));
-
-    strcpy(components[num_component]->resource_path, component->resource_path);
-
-    components[num_component]->srcRect = component->srcRect;
-    components[num_component]->dstRect = component->dstRect;
+    components[num_component] = component;
 
     num_component++;
 }
@@ -127,8 +122,6 @@ void s_render_destroy()
 {
     for (int i = 0; i < num_component; i++)
     {
-        free(components[i]);
-
         components[i] = NULL;
     }
 
