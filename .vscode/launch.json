@@ -9,22 +9,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}\\tbgc.exe",
-            "args": [
-                "-g",
-                "src\\main.c",
-                "src\\utils.c",
-                "src\\systems\\event.c",
-                "src\\systems\\render.c",
-                "src\\components\\render.c",
-                "-o",
-                "tbgc",
-                "-IC:\\dev\\SDL2-2.0.12\\i686-w64-mingw32\\include\\SDL2",
-                "-LC:\\dev\\SDL2-2.0.12\\i686-w64-mingw32\\lib",
-                "-lmingw32",
-                "-lSDL2main",
-                "-lSDL2",
-                "-w"
-            ],
+            "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
@@ -38,7 +23,7 @@
                     "ignoreFailures": true
                 }
             ],
-            "preLaunchTask": "C/C++: gcc.exe build active file"
+            "preLaunchTask": "SDL2"
         }
     ]
 }
