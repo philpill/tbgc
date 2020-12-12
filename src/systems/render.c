@@ -21,6 +21,7 @@ static Uint32 start, delta;
 static RenderComponent *components[100];
 static int num_component = 0;
 
+/*
 static int loadImage(char *resource, SDL_Texture **texture)
 {
     SDL_Surface *pngSurface = NULL;
@@ -72,13 +73,13 @@ static int loadImage(char *resource, SDL_Texture **texture)
     SDL_FreeSurface(pngSurface);
     pngSurface = NULL;
 }
+*/
 
 static void components_init()
 {
     for (int i = 0; i < num_component; i++) 
     {
         components[i]->renderer = renderer;
-
         render_comp_loadImage(components[i]);
     }
 }
@@ -102,7 +103,6 @@ void s_render_init()
 void s_render_add_component(RenderComponent *component)
 {
     components[num_component] = component;
-
     num_component++;
 }
 

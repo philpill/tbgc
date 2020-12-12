@@ -1,6 +1,9 @@
 #include "player.h"
 #include "utils.h"
 
+#include "./components/render.h";
+
+
 static Player player;
 
 int player_init(Position **pos)

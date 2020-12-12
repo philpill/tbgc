@@ -1,6 +1,8 @@
 #ifndef PLAYER_H_
 #define PLAYER_H_
 
+#include "./components/render.h";
+
 typedef struct {
     int acceleration_x;
     int acceleration_y;
