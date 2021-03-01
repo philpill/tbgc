@@ -6,12 +6,12 @@ static Player player;
 int player_init(Position **pos)
 {
     player = (Player) {
-        .acceleration_x = 0, 
-        .acceleration_y = 0, 
-        .acceleration_min_x = -10,
-        .acceleration_max_x = 10,
-        .acceleration_min_y = -10,
-        .acceleration_max_y = 10,
+        .acc_x = 0, 
+        .acc_y = 0, 
+        .acc_min_x = -10,
+        .acc_max_x = 10,
+        .acc_min_y = -10,
+        .acc_max_y = 10,
         .position = (Position) { 
             .x = 0, 
             .y = 100 
@@ -23,17 +23,39 @@ int player_init(Position **pos)
 
 int player_tick()
 {
-    if (player.acceleration_x != 0) 
+    player_x_tick();
+    player_y_tick();
+}
+
+int player_x_tick() {
+
+    if (player.acc_x != 0) 
     {
-        utils_clamp(&player.acceleration_x, player.acceleration_min_x, player.acceleration_max_x);
+        utils_clamp(&player.acc_x, player.acc_min_x, player.acc_max_x);
 
-        player.acceleration_x = player.acceleration_x < 0.1 && player.acceleration_x > -0.1 ? 0 : player.acceleration_x;
+        player.acc_x = player.acc_x < 0.1 && player.acc_x > -0.1 ? 0 : player.acc_x;
 
-        player.acceleration_x = player.acceleration_x * 0.75;
+        player.acc_x = player.acc_x * 0.75;
 
-        player.position.x = (int)(player.position.x + player.acceleration_x);
+        player.position.x = (int)(player.position.x + player.acc_x);
     }
 }
 
-void player_accelerate_x(int delta) { player.acceleration_x += delta; }
-void player_accelerate_y(double delta) { player.acceleration_y += delta; }
+int player_y_tick() {
+    
+    if (player.acc_y != 0) 
+    {
+        utils_clamp(&player.acc_y, player.acc_min_y, player.acc_max_y);
+
+        player.acc_y = player.acc_y < 0.1 && player.acc_y > -0.1 ? 0 : player.acc_y;
+
+        player.acc_y = player.acc_y * 0.75;
+
+        player.position.y = (int)(player.position.y + player.acc_y);
+
+        player.position.y = player.position.y > 100 ? 100 : player.position.y;
+    }
+}
+
+void player_acc_x(int delta)    { player.acc_x += delta; }
+void player_acc_y(double delta) { player.acc_y += delta; }

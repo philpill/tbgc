@@ -5,27 +5,38 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-static SDL_Renderer *renderer = NULL;
-static SDL_Texture *pngTexture = NULL;
-static SDL_Rect srcRect, dstRect;
-static SDL_Window *window = NULL;
-static Position *player_position;
+static SDL_Renderer     *rndr   = NULL;
+static SDL_Texture      *txtr   = NULL;
+static SDL_Window       *wnd    = NULL;
+static Position         *pos    = NULL;
+static SDL_Rect         srcRect, 
+                        dstRect;
 
-static int current_frame = 0;
-static int animation_rate = 150;
-static Uint32 start, delta;
+static unsigned char    *stbiData = NULL;
+
+static int              current_frame 	= 0,
+		  				animation_rate 	= 150;
+static Uint32           start, 
+                        delta;
 
 static int loadImage()
 {
-    SDL_Surface *pngSurface = NULL;
+    SDL_Surface *srfc = NULL;
 
-    unsigned char *stbiData = NULL;
+    Uint32  	rmask, 
+           		gmask, 
+            	bmask, 
+            	amask;
 
-    int width, height, orig_format;
-    int req_format = STBI_rgb_alpha;
+    int 		depth, 
+        		pitch,
+        		width, 
+        		height, 
+        		orig_format, 
+        		req_format = STBI_rgb_alpha;
+
     stbiData = stbi_load("assets/2.png", &width, &height, &orig_format, req_format);
 
-    Uint32 rmask, gmask, bmask, amask;
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
     int shift = (req_format == STBI_rgb) ? 8 : 0;
     rmask = 0xff000000 >> shift;
@@ -39,7 +50,6 @@ static int loadImage()
     amask = (req_format == STBI_rgb) ? 0 : 0xff000000;
 #endif
 
-    int depth, pitch;
     if (req_format == STBI_rgb)
     {
         depth = 24;
@@ -51,34 +61,31 @@ static int loadImage()
         pitch = 4 * width;
     }
 
-    pngSurface = SDL_CreateRGBSurfaceFrom((void *)stbiData, width, height, depth, pitch,
-                                          rmask, gmask, bmask, amask);
+    srfc = SDL_CreateRGBSurfaceFrom((void *)stbiData, width, height, depth, pitch, rmask, gmask, bmask, amask);
+    txtr = SDL_CreateTextureFromSurface(rndr, srfc);
 
-    stbi_image_free(stbiData);
-    stbiData = NULL;
+    SDL_FreeSurface(srfc);
 
-    pngTexture = SDL_CreateTextureFromSurface(renderer, pngSurface);
-
-    SDL_FreeSurface(pngSurface);
-    pngSurface = NULL;
+    srfc        = NULL;
+    stbiData    = NULL;
 }
 
 int render_init(Uint32 start_t, Position *player_pos)
 {
-    player_position = player_pos;
+    SDL_Surface *scrnSrfc 	= NULL;
+
+    const int 	SCREEN_WIDTH 	= 640,
+		  		SCREEN_HEIGHT 	= 480;
+
+    pos = player_pos;
 
     start = start_t;
 
-    const int SCREEN_WIDTH = 640;
-    const int SCREEN_HEIGHT = 480;
-
-    SDL_Surface *screenSurface = NULL;
-
     SDL_Init(SDL_INIT_VIDEO);
 
-    window = SDL_CreateWindow("TBGC", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-    screenSurface = SDL_GetWindowSurface(window);
+    wnd         = SDL_CreateWindow("TBGC", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+    rndr        = SDL_CreateRenderer(wnd, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    scrnSrfc    = SDL_GetWindowSurface(wnd);
 
     loadImage();
 
@@ -87,14 +94,14 @@ int render_init(Uint32 start_t, Position *player_pos)
 
 // http://gamedevgeek.com/tutorials/animating-sprites-with-sdl/
 
-int render_tick(Uint32 current_t)
+int render_tick(Uint32 current)
 {
-    delta = current_t - start;
+    delta = current - start;
 
     if (delta > animation_rate)
     {
         current_frame = current_frame < 2 ? current_frame + 1 : 1;
-        current_frame = dstRect.x == player_position->x ? 0 : current_frame;
+        current_frame = dstRect.x == pos->x ? 0 : current_frame;
         start = SDL_GetTicks();
     }
 
@@ -103,24 +110,26 @@ int render_tick(Uint32 current_t)
     srcRect.w = 32;
     srcRect.h = 32;
 
-    dstRect.x = player_position->x;
-    dstRect.y = player_position->y;
+    dstRect.x = pos->x;
+    dstRect.y = pos->y;
     dstRect.w = 32;
     dstRect.h = 32;
 
-    SDL_RenderClear(renderer);
-    SDL_RenderCopy(renderer, pngTexture, &srcRect, &dstRect);
-    SDL_RenderPresent(renderer);
+    SDL_RenderClear(rndr);
+    SDL_RenderCopy(rndr, txtr, &srcRect, &dstRect);
+    SDL_RenderPresent(rndr);
 }
 
 void render_destroy()
 {
-    SDL_DestroyTexture(pngTexture);
-    pngTexture = NULL;
+    stbi_image_free(stbiData);
+    
+    SDL_DestroyTexture(txtr);
+    txtr = NULL;
 
-    SDL_DestroyRenderer(renderer);
-    renderer = NULL;
+    SDL_DestroyRenderer(rndr);
+    rndr = NULL;
 
-    SDL_DestroyWindow(window);
-    window = NULL;
+    SDL_DestroyWindow(wnd);
+    wnd = NULL;
 }

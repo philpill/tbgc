@@ -1,6 +1,5 @@
 #include <stdbool.h>
 #include <SDL.h>
-
 #include "player.h"
 
 static SDL_Event e;
@@ -17,31 +16,24 @@ int event_tick()
         {
             return -1;
         }
-        else if (e.type == SDL_KEYDOWN)
-        {
-            //Select surfaces based on key press
-            switch (e.key.keysym.sym)
-            {
-            case SDLK_UP:
-                // posy--;
-                break;
+    }
 
-            case SDLK_DOWN:
-                // posy++;
-                break;
+    const Uint8* keystates = SDL_GetKeyboardState(NULL);
 
-            case SDLK_LEFT:
-                player_accelerate_x(-7);
-                break;
+     if (keystates[SDL_SCANCODE_ESCAPE]) {
+        return -1;
+    }   
 
-            case SDLK_RIGHT:
-                player_accelerate_x(7);
-                break;
+    if (keystates[SDL_SCANCODE_LEFT]) {
+        player_acc_x(-7);
+    }
 
-            case SDLK_ESCAPE:
-                return -1;
-            }
-        }
+    if (keystates[SDL_SCANCODE_RIGHT]) {
+        player_acc_x(7);
+    }
+
+    if (keystates[SDL_SCANCODE_SPACE]) {
+        player_acc_y(7);
     }
 
     return 0;

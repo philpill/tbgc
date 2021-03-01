@@ -13,29 +13,27 @@ void close()
 
 int main(int argc, char *args[])
 {
-    bool quit = false;
+    bool        quit    = false;
 
-    Uint32 start_t, current_t;
-
-    Position *player_pos;
-
-    // start timer
-    start_t = SDL_GetTicks();
+    Uint32      start_t = SDL_GetTicks(), 
+                current;
+                
+    Position    *player_pos;
 
     player_init(&player_pos);
     render_init(start_t, player_pos);
 
     while (!quit)
     {
-        current_t = SDL_GetTicks();
+        current = SDL_GetTicks();
 
         if (event_tick() != 0)
         {
             quit = true;
         }
 
-        player_tick(current_t);
-        render_tick(current_t);
+        player_tick(current);
+        render_tick(current);
     }
 
     close();

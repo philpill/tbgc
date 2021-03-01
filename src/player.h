@@ -7,12 +7,12 @@ typedef struct {
 } Position;
 
 typedef struct {
-    int acceleration_x;
-    int acceleration_y;
-    int acceleration_max_x;
-    int acceleration_min_x;
-    int acceleration_max_y;
-    int acceleration_min_y;
+    int acc_x;
+    int acc_y;
+    int acc_max_x;
+    int acc_min_x;
+    int acc_max_y;
+    int acc_min_y;
     Position position;
 } Player;
 
