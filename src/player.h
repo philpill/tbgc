@@ -17,6 +17,10 @@ typedef struct {
 } Player;
 
 int player_init(Position **pos);
-int player_tick();
+int player_tick(Uint32 current);
+
+void player_acc_x(int delta);
+void player_acc_y(int delta);
+void player_jump();
 
 #endif

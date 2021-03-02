@@ -33,7 +33,7 @@ int event_tick()
     }
 
     if (keystates[SDL_SCANCODE_SPACE]) {
-        player_acc_y(7);
+        player_jump();
     }
 
     return 0;
