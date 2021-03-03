@@ -4,9 +4,10 @@
 
 static Player player;
 
-int player_init(Position **pos)
+int player_init(Position **pos, PlayerAction **action)
 {
     player = (Player){
+        .action = 0,
         .acc_x = 0,
         .acc_y = 10,
         .acc_min_x = -10,
@@ -17,7 +18,8 @@ int player_init(Position **pos)
             .x = 0,
             .y = 100}};
 
-    *pos = &player.position;
+    *pos    = &player.position;
+    *action = &player.action;
 }
 
 int player_tick(Uint32 current)
@@ -59,10 +61,33 @@ void player_acc_y(int delta)
     player.acc_y += delta;
 }
 
+void player_default()
+{
+    player.action = 0;
+}
+
 void player_jump()
 {
     if (player.position.y == 100)
     {
         player_acc_y(-23);
     }
+}
+
+void player_crouch()
+{
+    if (player.position.y == 100)
+    {
+        player.action = 3;
+    }
+}
+
+void player_forward()
+{
+    player_acc_x(7);
+}
+
+void player_backward()
+{
+    player_acc_x(-7);
 }

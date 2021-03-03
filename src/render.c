@@ -9,6 +9,7 @@ static SDL_Renderer     *rndr   = NULL;
 static SDL_Texture      *txtr   = NULL;
 static SDL_Window       *wnd    = NULL;
 static Position         *pos    = NULL;
+static PlayerAction     *action = NULL;
 static SDL_Rect         srcRect = { .w = 32, .h = 32 }, 
                         dstRect = { .w = 32, .h = 32 };
 
@@ -70,16 +71,16 @@ static int loadImage()
     stbiData    = NULL;
 }
 
-int render_init(Uint32 start_t, Position *player_pos)
+int render_init(Uint32 start_t, Position *player_pos, PlayerAction *player_action)
 {
     SDL_Surface *scrnSrfc 	= NULL;
 
     const int 	SCREEN_WIDTH 	= 640,
 		  		SCREEN_HEIGHT 	= 480;
 
-    pos = player_pos;
-
-    start = start_t;
+    pos     = player_pos;
+    action  = player_action;
+    start   = start_t;
 
     SDL_Init(SDL_INIT_VIDEO);
 
@@ -103,6 +104,7 @@ int render_tick(Uint32 current)
         current_frame = current_frame < 2 ? current_frame + 1 : 1;
         current_frame = dstRect.x == pos->x ? 0 : current_frame;
         current_frame = pos->y == 100 ? current_frame : 3; 
+        current_frame = *action == 3 ? 4 : current_frame;
         start = SDL_GetTicks();
     }
 
