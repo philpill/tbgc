@@ -9,8 +9,8 @@ static SDL_Renderer     *rndr   = NULL;
 static SDL_Texture      *txtr   = NULL;
 static SDL_Window       *wnd    = NULL;
 static Position         *pos    = NULL;
-static SDL_Rect         srcRect, 
-                        dstRect;
+static SDL_Rect         srcRect = { .w = 32, .h = 32 }, 
+                        dstRect = { .w = 32, .h = 32 };
 
 static unsigned char    *stbiData = NULL;
 
@@ -102,18 +102,15 @@ int render_tick(Uint32 current)
     {
         current_frame = current_frame < 2 ? current_frame + 1 : 1;
         current_frame = dstRect.x == pos->x ? 0 : current_frame;
+        current_frame = pos->y == 100 ? current_frame : 3; 
         start = SDL_GetTicks();
     }
 
     srcRect.x = current_frame * 32;
     srcRect.y = 0;
-    srcRect.w = 32;
-    srcRect.h = 32;
 
     dstRect.x = pos->x;
     dstRect.y = pos->y;
-    dstRect.w = 32;
-    dstRect.h = 32;
 
     SDL_RenderClear(rndr);
     SDL_RenderCopy(rndr, txtr, &srcRect, &dstRect);
