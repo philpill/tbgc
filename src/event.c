@@ -22,17 +22,11 @@ int event_tick()
 
     if (keystates[SDL_SCANCODE_ESCAPE]) { return -1; }   
 
-
-
-    if (keystates[SDL_SCANCODE_DOWN])
-    { 
+    if (keystates[SDL_SCANCODE_DOWN]) { 
         player_crouch(); 
-    } 
-    else 
-    {
-        player_default();
+    } else {      
+        player_default(); 
     }
-
 
     if (keystates[SDL_SCANCODE_LEFT])   { player_backward(); }
     if (keystates[SDL_SCANCODE_RIGHT])  { player_forward(); }
