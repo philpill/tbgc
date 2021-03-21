@@ -4,6 +4,7 @@
 
 #include "event.h"
 #include "player.h"
+#include "level.h"
 
 void close()
 {
@@ -11,7 +12,7 @@ void close()
     SDL_Quit();
 }
 
-int main(int argc, char *args[])
+int main(int argc, char *argv[])
 {
     bool        quit    = false;
 
@@ -23,6 +24,7 @@ int main(int argc, char *args[])
 
     player_init(&player_pos, &player_action);
     render_init(start_t, player_pos, player_action);
+    level_init();
 
     while (!quit)
     {
@@ -35,6 +37,7 @@ int main(int argc, char *args[])
 
         player_tick(current);
         render_tick(current);
+        level_tick();
     }
 
     close();

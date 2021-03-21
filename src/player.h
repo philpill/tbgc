@@ -13,6 +13,12 @@ typedef enum {
     CROUCH
 } PlayerAction;
 
+typedef enum {
+    UNDEFINED,
+    PLAYER,
+    BLOCK
+} EntityType;
+
 typedef struct {
     int acc_x;
     int acc_y;
@@ -24,6 +30,7 @@ typedef struct {
     PlayerAction action;
 
 } Player;
+
 
 int player_init(Position **pos, PlayerAction **action);
 int player_tick(Uint32 current);
