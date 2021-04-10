@@ -1,10 +1,10 @@
 #include <SDL.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/stat.h>
 #include "player.h"
 #include "utils.h"
 #include "render.h"
+#include "asset.h" 
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -28,17 +28,21 @@ static Position *pos = NULL;
 static PlayerAction *action = NULL;
 static RenderComponent *components;
 
-struct stat buffer; 
-
-static int load_image(RenderComponent *component)
+static SDL_Texture *get_texture_by_path(char *path)
 {
     static unsigned char *stbiData = NULL;
+    SDL_Texture *tex = NULL;
     SDL_Surface *srfc = NULL;
-    char *path = component->path;
     int pitch,
         width,
         height,
         orig_format;
+
+    if (!asset_does_file_exist(components[num_components].path))
+    {
+        printf("Error: File does not exist: %s\n", components[num_components].path);
+        return NULL;
+    }
 
     stbiData = stbi_load(path, &width, &height, &orig_format, req_format);
     pitch = 4 * width;
@@ -50,8 +54,8 @@ static int load_image(RenderComponent *component)
         exit(1);
     }
 
-    component->texture = SDL_CreateTextureFromSurface(rndr, srfc);
-    if (component->texture == NULL)
+    tex = SDL_CreateTextureFromSurface(rndr, srfc);
+    if (tex == NULL)
     {
         printf("SDL_CreateTextureFromSurface: %s\n", SDL_GetError());
         exit(1);
@@ -61,7 +65,9 @@ static int load_image(RenderComponent *component)
 
     srfc = NULL;
     stbiData = NULL;
-}
+
+    return tex;
+} 
 
 int render_init(Uint32 start_t, Position *player_pos, PlayerAction *player_action)
 {
@@ -207,15 +213,7 @@ int render_add_new_component(char *path)
     }
     strcpy(components[num_components].path, path);
 
-    if (stat(components[num_components].path, &buffer) == 0)
-    {
-        load_image(&components[num_components]);
-    }
-    else
-    {
-        printf("Error: File does not exist: %s\n", components[num_components].path);
-    }
-    
+    components[num_components].texture = get_texture_by_path(components[num_components].path);
 
     num_components++;
     return num_components;
