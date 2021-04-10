@@ -1,6 +1,7 @@
 #include <SDL.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/stat.h>
 #include "player.h"
 #include "utils.h"
 #include "render.h"
@@ -26,6 +27,8 @@ static SDL_Window *wnd = NULL;
 static Position *pos = NULL;
 static PlayerAction *action = NULL;
 static RenderComponent *components;
+
+struct stat buffer; 
 
 static int load_image(RenderComponent *component)
 {
@@ -204,7 +207,15 @@ int render_add_new_component(char *path)
     }
     strcpy(components[num_components].path, path);
 
-    load_image(&components[num_components]);
+    if (stat(components[num_components].path, &buffer) == 0)
+    {
+        load_image(&components[num_components]);
+    }
+    else
+    {
+        printf("Error: File does not exist: %s\n", components[num_components].path);
+    }
+    
 
     num_components++;
     return num_components;
