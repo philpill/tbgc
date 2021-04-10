@@ -1,41 +1,71 @@
 #include <SDL.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include "player.h"
 #include "utils.h"
+#include "render.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-static SDL_Renderer     *rndr   = NULL;
-static SDL_Texture      *txtr   = NULL;
-static SDL_Window       *wnd    = NULL;
-static Position         *pos    = NULL;
-static SDL_Rect         srcRect = { .w = 32, .h = 32 }, 
-                        dstRect = { .w = 32, .h = 32 };
+static Uint32 depth,
+    start,
+    delta,
+    rmask,
+    gmask,
+    bmask,
+    amask;
 
-static unsigned char    *stbiData = NULL;
+static int req_format = STBI_rgb_alpha,
+           animation_rate = 150,
+           num_components = 0,
+           size_components = 0;
 
-static int              current_frame 	= 0,
-		  				animation_rate 	= 150;
-static Uint32           start, 
-                        delta;
+static SDL_Renderer *rndr = NULL;
+static SDL_Window *wnd = NULL;
+static Position *pos = NULL;
+static PlayerAction *action = NULL;
+static RenderComponent *components;
 
-static int loadImage()
+static int load_image(RenderComponent *component)
 {
+    static unsigned char *stbiData = NULL;
     SDL_Surface *srfc = NULL;
+    char *path = component->path;
+    int pitch,
+        width,
+        height,
+        orig_format;
 
-    Uint32  	rmask, 
-           		gmask, 
-            	bmask, 
-            	amask;
+    stbiData = stbi_load(path, &width, &height, &orig_format, req_format);
+    pitch = 4 * width;
 
-    int 		depth, 
-        		pitch,
-        		width, 
-        		height, 
-        		orig_format, 
-        		req_format = STBI_rgb_alpha;
+    srfc = SDL_CreateRGBSurfaceFrom((void *)stbiData, width, height, depth, pitch, rmask, gmask, bmask, amask);
+    if (srfc == NULL)
+    {
+        printf("SDL_CreateRGBSurfaceFrom: %s\n", SDL_GetError());
+        exit(1);
+    }
 
-    stbiData = stbi_load("assets/2.png", &width, &height, &orig_format, req_format);
+    component->texture = SDL_CreateTextureFromSurface(rndr, srfc);
+    if (component->texture == NULL)
+    {
+        printf("SDL_CreateTextureFromSurface: %s\n", SDL_GetError());
+        exit(1);
+    }
+
+    SDL_FreeSurface(srfc);
+
+    srfc = NULL;
+    stbiData = NULL;
+}
+
+int render_init(Uint32 start_t, Position *player_pos, PlayerAction *player_action)
+{
+    SDL_Surface *scrnSrfc = NULL;
+
+    const int SCREEN_WIDTH = 640,
+              SCREEN_HEIGHT = 480;
 
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
     int shift = (req_format == STBI_rgb) ? 8 : 0;
@@ -47,82 +77,193 @@ static int loadImage()
     rmask = 0x000000ff;
     gmask = 0x0000ff00;
     bmask = 0x00ff0000;
-    amask = (req_format == STBI_rgb) ? 0 : 0xff000000;
+    amask = 0xff000000;
 #endif
 
-    if (req_format == STBI_rgb)
-    {
-        depth = 24;
-        pitch = 3 * width; // 3 bytes per pixel * pixels per row
-    }
-    else
-    { // STBI_rgb_alpha (RGBA)
-        depth = 32;
-        pitch = 4 * width;
-    }
-
-    srfc = SDL_CreateRGBSurfaceFrom((void *)stbiData, width, height, depth, pitch, rmask, gmask, bmask, amask);
-    txtr = SDL_CreateTextureFromSurface(rndr, srfc);
-
-    SDL_FreeSurface(srfc);
-
-    srfc        = NULL;
-    stbiData    = NULL;
-}
-
-int render_init(Uint32 start_t, Position *player_pos)
-{
-    SDL_Surface *scrnSrfc 	= NULL;
-
-    const int 	SCREEN_WIDTH 	= 640,
-		  		SCREEN_HEIGHT 	= 480;
+    depth = 32;
 
     pos = player_pos;
-
+    action = player_action;
     start = start_t;
 
     SDL_Init(SDL_INIT_VIDEO);
 
-    wnd         = SDL_CreateWindow("TBGC", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-    rndr        = SDL_CreateRenderer(wnd, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-    scrnSrfc    = SDL_GetWindowSurface(wnd);
+    wnd = SDL_CreateWindow("TBGC", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+    if (wnd == NULL)
+    {
+        printf("SDL_CreateWindow: %s\n", SDL_GetError());
+        exit(1);
+    }
+    rndr = SDL_CreateRenderer(wnd, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    if (rndr == NULL)
+    {
+        printf("SDL_CreateRenderer: %s\n", SDL_GetError());
+        exit(1);
+    }
+    scrnSrfc = SDL_GetWindowSurface(wnd);
+    if (scrnSrfc == NULL)
+    {
+        printf("SDL_GetWindowSurface: %s\n", SDL_GetError());
+        exit(1);
+    }
 
-    loadImage();
-
+    // create player component
+    render_add_new_component("assets/2.png");
     return 0;
 }
 
-// http://gamedevgeek.com/tutorials/animating-sprites-with-sdl/
+RenderComponent **render_get_components()
+{
+    return components;
+}
 
+RenderComponent *render_get_component_by_path(char *path)
+{
+    RenderComponent *component = malloc(sizeof(RenderComponent));
+    if (component == NULL)
+    {
+        printf("Error: Memory not allocated\n");
+        exit(1);
+    }
+
+    for (int i = 0; i < num_components; i++)
+    {
+        if (components[i].path != NULL && strcmp(components[i].path, path) == 0)
+        {
+            component = &components[i];
+            break;
+        }
+    }
+
+    return component;
+}
+
+RenderComponent *render_get_component_by_index(int index)
+{
+    RenderComponent *component = NULL;
+
+    if (components[index].path != NULL)
+    {
+        component = malloc(sizeof(RenderComponent));
+        if (component == NULL)
+        {
+            printf("Error: Memory not allocated\n");
+            exit(1);
+        }
+
+        component = &components[index];
+    }
+
+    return component;
+}
+
+static void mem_check()
+{
+    if (size_components == 0)
+    {
+        size_components = 10;
+        components = calloc(size_components, sizeof(RenderComponent));
+        if (components == NULL)
+        {
+            printf("Error: Memory not allocated\n");
+            exit(1);
+        }
+    }
+    else if (num_components == size_components)
+    {
+        size_components += 10;
+        components = realloc(components, size_components);
+        if (components == NULL)
+        {
+            printf("Error: Memory not allocated\n");
+            exit(1);
+        }
+    }
+}
+
+void render_clear_components()
+{
+    num_components = 0;
+    size_components = 0;
+}
+
+int render_add_new_component(char *path)
+{
+    mem_check();
+
+    components[num_components].curr_frame = 0;
+    components[num_components].srcRect.w = 32;
+    components[num_components].srcRect.h = 32;
+    components[num_components].dstRect.w = 32;
+    components[num_components].dstRect.h = 32;
+    components[num_components].path = calloc(255, sizeof(char));
+    if (components[num_components].path == NULL)
+    {
+        printf("Error: Memory not allocated\n");
+        exit(1);
+    }
+    strcpy(components[num_components].path, path);
+
+    load_image(&components[num_components]);
+
+    num_components++;
+    return num_components;
+}
+
+void render_remove_component_by_index(int index)
+{
+    render_remove_component(&components[index]);
+}
+
+void render_remove_component(RenderComponent **component)
+{
+    SDL_DestroyTexture((*component)->texture);
+    (*component)->texture = NULL;
+    free((*component)->path);
+    (*component)->path = NULL;
+    free(*component);
+    *component = NULL;
+}
+
+// http://gamedevgeek.com/tutorials/animating-sprites-with-sdl/
 int render_tick(Uint32 current)
 {
     delta = current - start;
 
     if (delta > animation_rate)
     {
-        current_frame = current_frame < 2 ? current_frame + 1 : 1;
-        current_frame = dstRect.x == pos->x ? 0 : current_frame;
-        current_frame = pos->y == 100 ? current_frame : 3; 
+        for (int i = 0; i < num_components; i++)
+        {
+            components[i].curr_frame < 2 ? components[i].curr_frame + 1 : 1;
+            components[i].curr_frame = components[i].dstRect.x == pos->x ? 0 : components[i].curr_frame;
+            components[i].curr_frame = pos->y == 100 ? components[i].curr_frame : 3;
+            components[i].curr_frame = components[i].action == 3 ? 4 : components[i].curr_frame;
+        }
+
         start = SDL_GetTicks();
     }
 
-    srcRect.x = current_frame * 32;
-    srcRect.y = 0;
-
-    dstRect.x = pos->x;
-    dstRect.y = pos->y;
-
     SDL_RenderClear(rndr);
-    SDL_RenderCopy(rndr, txtr, &srcRect, &dstRect);
+
+    for (int i = 0; i < num_components; i++)
+    {
+        components[i].srcRect.x = components[i].curr_frame * 32;
+        components[i].srcRect.y = 0;
+        components[i].dstRect.x = pos->x;
+        components[i].dstRect.y = pos->y;
+
+        SDL_RenderCopy(rndr, components[i].texture, &components[i].srcRect, &components[i].dstRect);
+    }
+
     SDL_RenderPresent(rndr);
 }
 
 void render_destroy()
 {
-    stbi_image_free(stbiData);
-    
-    SDL_DestroyTexture(txtr);
-    txtr = NULL;
+    for (int i = 0; i < num_components; i++)
+    {
+        render_remove_component(&components[i]);
+    }
 
     SDL_DestroyRenderer(rndr);
     rndr = NULL;

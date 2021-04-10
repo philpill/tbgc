@@ -1,0 +1,2 @@
+- Use cute_aesprite.h to load .aes files without having to export
+- Create Tiled level and use cute_tiled.h to load Tiled .json files

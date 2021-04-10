@@ -41,5 +41,14 @@ update configurations:
     "includePath": [
         "${workspaceFolder}/**",
         "C:\\dev\\SDL2-2.0.12\\i686-w64-mingw32\\include\\SDL2",
-        "C:\\dev\\SDL2_image-2.0.5\\i686-w64-mingw32\\include\\SDL2"
+        "C:\\dev\\SDL2_image-2.0.5\\i686-w64-mingw32\\include\\SDL2",
+        "C:\\Program Files (x86)\\cmocka\\include"
     ],
+
+cmocka
+
+download windows installer
+https://cmocka.org/files/1.1/
+
+Add cmocka to PATH
+C:\Program Files (x86)\cmocka\bin
