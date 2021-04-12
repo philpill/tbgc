@@ -2,13 +2,17 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-#include "event.h"
-#include "player.h"
-#include "level.h"
+#include "component/physics.h"
+#include "manager/entity.h"
+#include "system/keyboard.h"
+#include "system/movement.h"
+#include "system/physics.h"
+#include "system/render.h"
+
 
 void close()
 {
-    render_destroy();
+    // render_destroy();
     SDL_Quit();
 }
 
@@ -18,26 +22,27 @@ int main(int argc, char *argv[])
 
     Uint32      start_t = SDL_GetTicks(), 
                 current;
-                
-    Position        *player_pos;
-    PlayerAction    *player_action;
 
-    player_init(&player_pos, &player_action);
-    render_init(start_t, player_pos, player_action);
-    level_init();
+    manager_entity_init();
+
+    system_keyboard_init();
+    system_movement_init();
+    system_physics_init();
+    system_render_init();
+
+    manager_entity_add_player_entity();
 
     while (!quit)
     {
         current = SDL_GetTicks();
 
-        if (event_tick() != 0)
+        if (system_keyboard_tick(current) != 0)
         {
             quit = true;
         }
-
-        player_tick(current);
-        render_tick(current);
-        level_tick();
+        system_movement_tick(current);
+        system_physics_tick(current);
+        system_render_tick(current);
     }
 
     close();

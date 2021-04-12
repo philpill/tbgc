@@ -3,8 +3,14 @@ SHELL = /bin/sh
 CC = gcc
 DEPS = src/stb_image.h
 
-OBJS = src/main.c src/render.c src/event.c src/player.c src/utils.c src/level.c src/asset.c
-OBJS_TEST = src/render.c src/event.c src/player.c src/utils.c src/level.c  src/asset.c src/test/test.c src/test/render.c
+OBJS = src/main.c src/utils.c src/asset.c \
+	src/manager/entity.c \
+	src/system/keyboard.c src/system/movement.c src/system/physics.c src/system/render.c 
+
+OBJS_TEST = src/utils.c src/asset.c \
+	src/manager/entity.c \
+	src/system/keyboard.c src/system/movement.c src/system/physics.c src/system/render.c \
+	src/test/test.c src/test/core.c
 
 INCLUDE_PATHS = -IC:/dev/SDL2-2.0.12/i686-w64-mingw32/include/SDL2
 INCLUDE_PATHS_TEST = ${INCLUDE_PATHS} -I"C:/Program Files (x86)/cmocka/include"
