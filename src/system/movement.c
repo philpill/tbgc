@@ -52,6 +52,9 @@ void system_movement_tick(Uint32 current_t)
             // position
             p_cmp->x = p_cmp->x + m_cmp->vel_x * diff_t_seconds;
 
+            // limit to screen
+            utils_clamp(&p_cmp->x, 0, SCREEN_WIDTH - 32);
+
             // friction
             m_cmp->vel_x = m_cmp->vel_x * pow(0.01, diff_t_seconds);
 

@@ -3,6 +3,7 @@
 #include "../component/position.h"
 #include "../component/input.h"
 #include "../asset.h"
+#include "../constants.h"
 #include "../manager/entity.h"
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -78,9 +79,6 @@ int system_render_init()
     puts("system_render_init");
 
     SDL_Surface *scrnSrfc = NULL;
-
-    const int SCREEN_WIDTH = 640,
-              SCREEN_HEIGHT = 480;
 
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
     int shift = (req_format == STBI_rgb) ? 8 : 0;
