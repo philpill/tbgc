@@ -8,6 +8,7 @@
 #include "system/movement.h"
 #include "system/physics.h"
 #include "system/render.h"
+#include "system/joypad.h"
 
 
 void close()
@@ -29,6 +30,7 @@ int main(int argc, char *argv[])
     system_movement_init();
     system_physics_init();
     system_render_init();
+    system_joypad_init();
 
     manager_entity_add_player_entity();
 
@@ -43,7 +45,10 @@ int main(int argc, char *argv[])
         system_movement_tick(current);
         system_physics_tick(current);
         system_render_tick(current);
+        system_joypad_tick(current);
     }
+
+    system_joypad_exit();
 
     close();
 

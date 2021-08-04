@@ -5,11 +5,13 @@ DEPS = src/stb_image.h
 
 OBJS = src/main.c src/utils.c src/asset.c \
 	src/manager/entity.c \
-	src/system/keyboard.c src/system/movement.c src/system/physics.c src/system/render.c 
+	src/system/keyboard.c src/system/movement.c src/system/physics.c src/system/render.c \
+	src/system/joypad.c 
 
 OBJS_TEST = src/utils.c src/asset.c \
 	src/manager/entity.c \
 	src/system/keyboard.c src/system/movement.c src/system/physics.c src/system/render.c \
+	src/system/joypad.c \
 	src/test/test.c src/test/core.c
 
 INCLUDE_PATHS = -IC:/dev/SDL2-2.0.12/i686-w64-mingw32/include/SDL2
