@@ -66,8 +66,8 @@ int system_keyboard_tick(Uint32 current)
 
             i_cmp->up       = keystates[SDL_SCANCODE_UP];
             i_cmp->down     = keystates[SDL_SCANCODE_DOWN];
-            // i_cmp->left     = keystates[SDL_SCANCODE_LEFT];
-            // i_cmp->right    = keystates[SDL_SCANCODE_RIGHT];
+            i_cmp->left     = keystates[SDL_SCANCODE_LEFT];
+            i_cmp->right    = keystates[SDL_SCANCODE_RIGHT];
             i_cmp->jump     = keystates[SDL_SCANCODE_SPACE];
         }
     }

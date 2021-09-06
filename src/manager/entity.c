@@ -33,9 +33,6 @@ int manager_entity_insert_entity(Entity *entity)
         entities = utils_realloc(entities, size_entities * sizeof(Entity));
     }
 
-    printf("manager_entity_insert_entity: %p \n", entities);
-    printf("manager_entity_insert_entity: %p \n", entities[num_entities]);
-
     // set properties
     entities[num_entities].id = num_entities;
     entities[num_entities].component_mask = 15;
@@ -44,9 +41,6 @@ int manager_entity_insert_entity(Entity *entity)
     entities[num_entities].cmp_position = entity->cmp_position;
     entities[num_entities].cmp_render = entity->cmp_render;
     entities[num_entities].cmp_physics = entity->cmp_physics;
-
-    printf("manager_entity_insert_entity: %d \n", entities[num_entities].component_mask);
-
 
     // create components
 
@@ -71,8 +65,6 @@ void manager_entity_init()
     size_entities = 0;
 
     entities = utils_calloc(num_entities, sizeof(Entity));
-
-    printf("1. %p\n", entities);
 }
 
 void manager_entity_add_player_entity()
@@ -88,8 +80,14 @@ void manager_entity_add_player_entity()
     entity->cmp_movement->acc_max_x = ACC_X_MAX;
     entity->cmp_movement->acc_min_x = ACC_X_MIN;
 
+    entity->cmp_movement->acc_max_y = ACC_Y_MAX;
+    entity->cmp_movement->acc_min_y = ACC_Y_MIN;
+
     entity->cmp_movement->vel_max_x = 200;
     entity->cmp_movement->vel_min_x = -200;
+
+    entity->cmp_movement->vel_max_y = 100;
+    entity->cmp_movement->vel_min_y = -100;
 
     entity->cmp_render->path = utils_malloc(255 * sizeof(char));
     entity->cmp_render->src_rect.h = 32;

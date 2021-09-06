@@ -121,23 +121,29 @@ void system_render_tick(Uint32 current_t)
 {
     delta = current_t - prev_t;
 
+    prev_t = current_t;
+
+    if (delta > animation_rate) {
+        SDL_Delay(delta - animation_rate);
+    }
+
     Entity *entities = manager_entity_get_entities();
     int num_entities = manager_entity_get_num_entities();
 
-    for (int i = 0; i < num_entities; i++)
-    {
-        if (entities[i].component_mask & system_mask > 0)
-        {
-            RenderComponent *r_cmp = entities[i].cmp_render;
-            PositionComponent *p_cmp = entities[i].cmp_position;
-            InputComponent *i_cmp = entities[i].cmp_position;
+    // for (int i = 0; i < num_entities; i++)
+    // {
+    //     if (entities[i].component_mask & system_mask > 0)
+    //     {
+    //         RenderComponent *r_cmp = entities[i].cmp_render;
+    //         PositionComponent *p_cmp = entities[i].cmp_position;
+    //         InputComponent *i_cmp = entities[i].cmp_position;
 
-            r_cmp->curr_frame < 2 ? r_cmp->curr_frame + 1 : 1;
-            r_cmp->curr_frame = r_cmp->dst_rect.x == p_cmp->x ? 0 : r_cmp->curr_frame;
-            r_cmp->curr_frame = p_cmp->y == 100 ? r_cmp->curr_frame : 3;
-            r_cmp->curr_frame = i_cmp->down ? 4 : r_cmp->curr_frame;
-        }
-    }
+    //         r_cmp->curr_frame < 2 ? r_cmp->curr_frame + 1 : 1;
+    //         r_cmp->curr_frame = r_cmp->dst_rect.x == p_cmp->x ? 0 : r_cmp->curr_frame;
+    //         r_cmp->curr_frame = p_cmp->y == 100 ? r_cmp->curr_frame : 3;
+    //         r_cmp->curr_frame = i_cmp->down ? 4 : r_cmp->curr_frame;
+    //     }
+    // }
 
     SDL_RenderClear(rndr);
 
@@ -158,10 +164,11 @@ void system_render_tick(Uint32 current_t)
     }
 
     SDL_RenderPresent(rndr);
+}
 
-    prev_t = current_t;
-
-    if (delta > animation_rate) {
-        SDL_Delay(delta - animation_rate);
-    }
+int system_renderer_exit()
+{
+    SDL_DestroyRenderer(rndr);
+    SDL_DestroyWindow(wnd);
+    return 0;
 }

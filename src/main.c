@@ -49,6 +49,7 @@ int main(int argc, char *argv[])
     }
 
     system_joypad_exit();
+    system_renderer_exit();
 
     close();
 
